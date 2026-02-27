@@ -1,20 +1,12 @@
 <script setup lang="ts">
-import { ElButton as Button } from 'element-plus'
-import { ref } from 'vue'
 
-const click = ref(0)
-
-function handleClick() {
-  console.log('click')
-  click.value++
-}
 </script>
 
 <template>
-  <Button @click="handleClick">
-    Click Me
-  </Button>
-  <p>{{click}}</p>
+  <div>
+    <h1 style="margin: 0.5rem;">Budget Stats GUI — App mounted</h1>
+    <router-view></router-view>
+  </div>
 </template>
 
 <style scoped>
