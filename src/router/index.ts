@@ -1,18 +1,26 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 
 const routes = [
     {
         path: '/',
-        redirect: '/fileupload'
+        redirect: '/Landing-Page'
     },
     {
-        path: '/fileupload',
-        component: () => import('../views/FileUpload.vue')
-    }
+        path: '/Landing-Page',
+        component: () => import('../views/Landing-Page.vue')
+    },
+    {
+        path: '/Settings',
+        component: () => import('../views/Settings.vue')
+    },
+    {
+        path: '/Script-Upload',
+        component: () => import('../views/Script-Upload.vue')
+    },
 ]
 
 const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHashHistory(),
     routes
 })
 
