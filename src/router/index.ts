@@ -17,6 +17,17 @@ const routes = [
         path: '/Script-Upload',
         component: () => import('../views/Script-Upload.vue')
     },
+    {
+        path: '/View-Data-Landing',
+        component: () => import('../views/View-Data-Landing.vue')
+    },
+    {path: '/Change-Data-Landing',
+        component: () => import('../views/Change-Data-Landing.vue')
+    },
+    {
+        path: '/Data-View-Account-Selection',
+        component: () => import('../views/Data-View-Account-Selection.vue')
+    }
 ]
 
 const router = createRouter({

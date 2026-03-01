@@ -8,6 +8,7 @@ const router = useRouter();
 const items = ref([
   {label: 'Back', icon: 'pi pi-angle-left', command: () => router.back()},
     { label: 'Home', icon: 'pi pi-home', command: () => router.push('/Landing-Page') },
+    { label: 'Budget Stats GUI'},
     { label: 'Settings', icon: 'pi pi-cog', command: () => router.push('/Settings')},
     { label: 'Script Upload', icon: 'pi pi-upload', command: () => router.push('/Script-Upload')},
 ])
@@ -21,5 +22,7 @@ const items = ref([
 </template>
 
 <style scoped>
-
+:deep(.p-menubar) {
+  justify-content: center;
+}
 </style>
