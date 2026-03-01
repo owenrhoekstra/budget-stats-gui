@@ -4,7 +4,7 @@ import Button from 'primevue/button';
 import Carousel from 'primevue/carousel';
 import Panel from 'primevue/panel';
 import { ref, onMounted } from 'vue';
-import { getAlerts } from '../controller/view-data-landing-carousel.ts';
+import { getAlerts } from '../../controller/view-data-landing-carousel.ts';
 
 const alerts = ref<any[]>([])
 

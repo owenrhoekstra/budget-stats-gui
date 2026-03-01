@@ -7,7 +7,7 @@ const routes = [
     },
     {
         path: '/Landing-Page',
-        component: () => import('../views/Landing-Page.vue')
+        component: () => import('../views/Landing Pages/Landing-Page.vue')
     },
     {
         path: '/Settings',
@@ -19,10 +19,10 @@ const routes = [
     },
     {
         path: '/View-Data-Landing',
-        component: () => import('../views/View-Data-Landing.vue')
+        component: () => import('../views/Landing Pages/View-Data-Landing.vue')
     },
     {path: '/Change-Data-Landing',
-        component: () => import('../views/Change-Data-Landing.vue')
+        component: () => import('../views/Landing Pages/Change-Data-Landing.vue')
     },
     {
         path: '/Data-View-Account-Selection',
