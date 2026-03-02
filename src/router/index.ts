@@ -27,6 +27,14 @@ const routes = [
     {
         path: '/Data-View-Account-Selection',
         component: () => import('../views/Data-View-Account-Selection.vue')
+    },
+    {
+        path: '/develop',
+        component: () => import('../views/Develop.vue')
+    },
+    {
+        path: '/WealthSimple-Data-View',
+        component: () => import('../views/Work Pages/WealthSimple-Data-View.vue')
     }
 ]
 

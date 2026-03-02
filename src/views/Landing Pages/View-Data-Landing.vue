@@ -30,7 +30,7 @@ onMounted(async() => {
     </template>
     <template #title>Transaction Logs</template>
     <template #footer>
-      <Button label="Enter" icon="pi pi-sign-in" @click="$router.push('/')"/>
+      <Button label="Enter" icon="pi pi-sign-in" @click="$router.push('/develop')"/>
     </template>
   </Card>
   <Card style="width: 25rem; overflow: hidden">
@@ -39,7 +39,7 @@ onMounted(async() => {
     </template>
     <template #title>Spending Habits</template>
     <template #footer>
-      <Button label="Enter" icon="pi pi-sign-in" @click="$router.push('/')"/>
+      <Button label="Enter" icon="pi pi-sign-in" @click="$router.push('/develop')"/>
     </template>
   </Card>
 </div>

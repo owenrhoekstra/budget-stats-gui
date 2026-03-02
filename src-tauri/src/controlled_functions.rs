@@ -1,0 +1,1 @@
+pub mod wealthsimple_data_view_scripts;
