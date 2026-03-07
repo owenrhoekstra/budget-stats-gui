@@ -10,7 +10,11 @@ pub fn run() {
       .invoke_handler(tauri::generate_handler![
           carousel_alerts_data_landing_page::get_alert_data,
           csv_data_import_apple_script::csv_import_apple_script,
-          wealthsimple_data_view_scripts::wealthsimple_data_run_script,
+          wealthsimple_data_view_scripts::wealthsimple_data_run_built_in_script,
+          wealthsimple_data_view_scripts::wealthsimple_data_get_built_in_scripts,
+          wealthsimple_data_view_scripts::wealthsimple_data_get_imported_scripts,
+          wealthsimple_data_view_scripts::wealthsimple_data_run_imported_script,
+
       ])
     .setup(|app| {
       if cfg!(debug_assertions) {

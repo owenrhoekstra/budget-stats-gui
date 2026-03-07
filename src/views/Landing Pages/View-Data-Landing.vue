@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import Card from 'primevue/card';
-import Button from 'primevue/button';
-import Carousel from 'primevue/carousel';
-import Panel from 'primevue/panel';
-import { ref, onMounted } from 'vue';
-import { getAlerts } from '../../controller/view-data-landing-carousel.ts';
+import Card from "primevue/card";
+import Button from "primevue/button";
+import Carousel from "primevue/carousel";
+import Panel from "primevue/panel";
+import { ref, onMounted } from "vue";
+import { getAlerts } from "../../controller/view-data-landing-carousel.ts";
 
-const alerts = ref<any[]>([])
+const alerts = ref<any[]>([]);
 
-onMounted(async() => {
-  alerts.value = await getAlerts();
-})
+onMounted(async () => {
+	alerts.value = await getAlerts();
+});
 </script>
 
 <template>

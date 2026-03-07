@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Panel from 'primevue/panel';
-import Button from 'primevue/button';
+import Panel from "primevue/panel";
+import Button from "primevue/button";
 </script>
 
 <template>
