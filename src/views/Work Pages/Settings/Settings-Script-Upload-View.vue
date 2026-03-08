@@ -5,6 +5,8 @@ import Column from "primevue/column";
 import { invoke } from "@tauri-apps/api/core";
 import scriptAddBar from "../../../components/scriptAddBar.vue";
 import Button from "primevue/button";
+import { useConfirm } from "primevue/useconfirm";
+import ConfirmDialog from "primevue/confirmdialog";
 
 
 interface Script {
@@ -16,6 +18,7 @@ interface Script {
 }
 
 const importedScripts = ref<Script[]>([]);
+const confirm = useConfirm();
 
 onMounted(async () => {
   try {
@@ -35,13 +38,16 @@ const updateScripts = async () => {
   }
 }
 
-function deleteScriptEntry(handler: string) {
-  const confirmed = window.confirm("Are you sure you want to delete this script?\n\nThis will remove it from the list.");
-  if (!confirmed) return;
-
-  console.log("Delete requested for:", handler);
-  // invoke("delete_script_from_db", { path: handler })
-  //   .then(() => updateScripts());
+function deleteScriptEntry(handler: string, name: string, date: string | null | undefined) {
+  confirm.require({
+    message: `Delete ${name} that was imported on ${date ?? "unknown date"}?`,
+    header: "Confirmation",
+    icon: "pi pi-exclamation-triangle",
+    accept: () => {
+      invoke("delete_archive_imported_scripts", { path: handler })
+      .then(() => updateScripts());
+    }
+  });
 }
 </script>
 
@@ -66,11 +72,12 @@ function deleteScriptEntry(handler: string) {
           icon="pi pi-trash"
           severity="danger"
           size="small"
-          @click="() => deleteScriptEntry(data.handler)"
+          @click="() => deleteScriptEntry(data.handler, data.name, data.date_added)"
         />
       </template>
     </Column>
   </DataTable>
+  <ConfirmDialog />
 </template>
 
 <style scoped>

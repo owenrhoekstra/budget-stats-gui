@@ -3,41 +3,52 @@ pub mod gen_stats;
 // pub mod investments;
 // pub mod dividends;
 
+use tokio::process::Command;
+
 #[tauri::command]
-pub fn wealthsimple_data_run_built_in_script(script_name: String) -> Result<(), String> {
+pub fn wealthsimple_data_run_built_in_script(script_name: String) -> Result<String, String> {
     match script_name.as_str() {
         "gen_stats" => {
-            gen_stats::wealthsimple_balance_averages();
-            Ok(())
+            // Capture output from the module function
+            let output = gen_stats::wealthsimple_balance_averages();
+            Ok(output)
         }
 
         // "investments" => {
-        //     investments::run_investments();
-        //     Ok(())
+        //     let output = investments::run_investments();
+        //     Ok(output)
         // }
+
         _ => Err(format!("Unknown script: {}", script_name)),
     }
 }
 
 #[tauri::command]
-pub fn wealthsimple_data_run_imported_script(handler: String) -> Result<(), String> {
-    use std::process::Command;
+pub async fn wealthsimple_data_run_imported_script(handler: String, db_path_state: tauri::State<'_, std::path::PathBuf>) -> Result<String, String> {
+    use std::process::Stdio;
 
-    println!("Running script at: {}", handler);
+    let db_path = db_path_state.to_str().unwrap();
 
-    let result = Command::new("python3").arg(&handler).output();
+    // Spawn the Python script with db path as argument
+    let child: tokio::process::Child = Command::new("python3")
+        .arg(&handler)
+        .arg(&db_path)
+        .stdout(Stdio::piped())
+        .spawn()
+        .map_err(|e| format!("Failed to spawn process: {}", e))?;
 
-    match result {
-        Ok(output) => {
-            if output.status.success() {
-                let stdout = String::from_utf8_lossy(&output.stdout);
-                println!("{}", stdout);
-                Ok(())
-            } else {
-                Err(String::from_utf8_lossy(&output.stderr).to_string())
-            }
-        }
-        Err(e) => Err(format!("Failed to run imported script: {}", e)),
+    let output = child
+        .wait_with_output()
+        .await
+        .map_err(|e| format!("Failed while waiting for process: {}", e))?;
+
+    let stdout = String::from_utf8_lossy(&output.stdout).to_string();
+    let stderr = String::from_utf8_lossy(&output.stderr).to_string();
+
+    if output.status.success() {
+        Ok(stdout)
+    } else {
+        Err(format!("{}\nError:\n{}", stdout, stderr))
     }
 }
 
@@ -57,13 +68,6 @@ pub fn wealthsimple_data_get_built_in_scripts() -> Vec<Script> {
             name: "General Statistics".into(),
             description: "Run general stats such as mean, sd, median, and month over month changes to balance".into(),
             handler: "gen_stats".into(),
-            date_added: None,
-            extension: None,
-        },
-        Script {
-            name: "Data Skewness".into(),
-            description: "Inspect Kurtosis, skewness, deviations and more".into(),
-            handler: "data_skew".into(),
             date_added: None,
             extension: None,
         },

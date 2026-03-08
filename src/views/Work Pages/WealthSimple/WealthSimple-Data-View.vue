@@ -4,6 +4,7 @@ import Button from "primevue/button";
 import { invoke } from "@tauri-apps/api/core";
 import Card from "primevue/card";
 import Carousel from "primevue/carousel";
+import ProgressBar from 'primevue/progressbar';
 import { ref } from "vue";
 import { onMounted } from "vue";
 
@@ -28,11 +29,24 @@ function confirmAction_ImportedScript(handler: string, message: string) {
 }
 
 async function runPackagedScript(scriptName: string) {
-	await invoke("wealthsimple_data_run_built_in_script", { scriptName });
+	runningScript.value = scriptName;
+	try {
+		scriptOutputs.value[scriptName] = await invoke("wealthsimple_data_run_built_in_script", { scriptName });
+	} catch (err) {
+		scriptOutputs.value[scriptName] = `Error: ${err}`;
+	}
+	runningScript.value = null;
 }
 
 async function runImportedScript(handler: string) {
-	await invoke("wealthsimple_data_run_imported_script", { handler });
+    runningScript.value = handler;
+    try {
+        // Store output in scriptOutputs so <pre> can render it
+        scriptOutputs.value[handler] = await invoke("wealthsimple_data_run_imported_script", { handler });
+    } catch (err) {
+        scriptOutputs.value[handler] = `Error: ${err}`;
+    }
+    runningScript.value = null;
 }
 
 interface Script {
@@ -43,14 +57,26 @@ interface Script {
 
 const packagedScripts = ref<Script[]>([]);
 const importedScripts = ref<Script[]>([]);
+const runningScript = ref<string | null>(null);
+const scriptOutputs = ref<Record<string, string>>({});
 
 onMounted(async () => {
-	packagedScripts.value = await invoke(
-		"wealthsimple_data_get_built_in_scripts",
-	);
-	importedScripts.value = await invoke(
-		"wealthsimple_data_get_imported_scripts",
-	);
+	try {
+		packagedScripts.value = await invoke(
+			"wealthsimple_data_get_built_in_scripts",
+		);
+	} catch (err) {
+		console.error("Error fetching built-in scripts:", err);
+		packagedScripts.value = [];
+	}
+	try {
+		importedScripts.value = await invoke(
+			"wealthsimple_data_get_imported_scripts",
+		);
+	} catch (err) {
+		console.error("Error fetching imported scripts:", err);
+		importedScripts.value = [];
+	}
 });
 </script>
 
@@ -67,7 +93,10 @@ onMounted(async () => {
           <Button
               label="Run"
               @click="confirmAction_PackagedScript(slotProps.data.handler, `Run ${slotProps.data.name}?`)"
+              :disabled="runningScript === slotProps.data.handler"
           />
+          <ProgressBar v-if="runningScript === slotProps.data.handler" mode="indeterminate" style="height:6px;margin-top:0.5rem"></ProgressBar>
+          <pre v-if="scriptOutputs[slotProps.data.handler]">{{ scriptOutputs[slotProps.data.handler] }}</pre>
         </template>
       </Card>
     </template>
@@ -84,7 +113,10 @@ onMounted(async () => {
           <Button
               label="Run"
               @click="confirmAction_ImportedScript(slotProps.data.handler, `Run ${slotProps.data.name}?`)"
+              :disabled="runningScript === slotProps.data.handler"
           />
+          <ProgressBar v-if="runningScript === slotProps.data.handler" mode="indeterminate" style="height:6px;margin-top:0.5rem"></ProgressBar>
+          <pre v-if="scriptOutputs[slotProps.data.handler]">{{ scriptOutputs[slotProps.data.handler] }}</pre>
         </template>
       </Card>
     </template>

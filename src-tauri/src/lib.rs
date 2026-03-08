@@ -19,7 +19,7 @@ pub fn run() {
             wealthsimple_data_view_scripts::wealthsimple_data_get_imported_scripts,
             wealthsimple_data_view_scripts::wealthsimple_data_run_imported_script,
             import_script_to_db::import_script_to_db,
-            delete_script_from_db::delete_script_from_db,
+            delete_script_from_db::delete_archive_imported_scripts,
         ])
         .setup(|app| {
             tokio::runtime::Runtime::new().unwrap().block_on(async {
@@ -30,6 +30,7 @@ pub fn run() {
                     .expect("Failed to open database pools");
                 app.manage(read_pool);
                 app.manage(write_pool);
+                app.manage(path);
             });
 
             if cfg!(debug_assertions) {
