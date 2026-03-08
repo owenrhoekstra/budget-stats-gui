@@ -13,6 +13,8 @@ const selectedPath = ref("");
 const scriptName = ref("");
 const scriptDescription = ref("");
 
+const emit = defineEmits<{ (e: "scriptUploaded"): void }>();
+
 const items = ref([
   {
     label: "Choose Script",
@@ -42,10 +44,12 @@ async function submitScript() {
   const payload = {
     path: selectedPath.value,
     name: scriptName.value,
-    description: scriptDescription.value
+    description: scriptDescription.value,
+    extension: selectedPath.value.split('.').pop()
   };
 
   await invoke("import_script_to_db", { payload });
+  emit("scriptUploaded");
 
   showDialog.value = false;
   scriptName.value = "";

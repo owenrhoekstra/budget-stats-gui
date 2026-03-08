@@ -6,7 +6,6 @@ use controlled_functions::*;
 use db_modules::*;
 use independent_functions::*;
 use tauri::Manager;
-use db_modules::db_pool_opener::{ReadPool, WritePool};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -20,10 +19,13 @@ pub fn run() {
             wealthsimple_data_view_scripts::wealthsimple_data_get_imported_scripts,
             wealthsimple_data_view_scripts::wealthsimple_data_run_imported_script,
             import_script_to_db::import_script_to_db,
+            delete_script_from_db::delete_script_from_db,
         ])
         .setup(|app| {
             tokio::runtime::Runtime::new().unwrap().block_on(async {
-                let (read_pool, write_pool) = db_modules::db_pool_opener::open_pools()
+                let path = app.path().app_data_dir().unwrap();
+                println!("App data dir: {:?}", path);
+                let (read_pool, write_pool) = db_modules::db_pool_opener::open_pools(&path)
                     .await
                     .expect("Failed to open database pools");
                 app.manage(read_pool);

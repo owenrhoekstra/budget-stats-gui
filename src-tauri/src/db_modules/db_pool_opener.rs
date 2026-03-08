@@ -2,7 +2,6 @@ use sqlx::sqlite::{SqliteConnectOptions, SqliteJournalMode, SqlitePool, SqlitePo
 use std::str::FromStr;
 use std::sync::Arc;
 use anyhow::Result;
-use std::path::Path;
 use std::ops::Deref;
 
 #[derive(Clone)]
@@ -37,20 +36,20 @@ impl AsRef<SqlitePool> for WritePool {
     }
 }
 
-pub async fn open_pools() -> Result<(ReadPool, WritePool)> {
-    let db_path = "/Users/owenhoekstra/.homemade-apps/budget-stats-gui/db/budget-stats-gui.db";
+pub async fn open_pools(app_data_dir: &std::path::Path) -> Result<(ReadPool, WritePool)> {
+    let db_path = app_data_dir.join("db").join("budget-stats-gui.db");
 
     // Ensure the directory exists
-    if let Some(parent) = Path::new(db_path).parent() {
+    if let Some(parent) = db_path.parent() {
         std::fs::create_dir_all(parent)?;
     }
 
     // --- 1. Configure options ---
-    let write_opts = SqliteConnectOptions::from_str(db_path)?
+    let write_opts = SqliteConnectOptions::from_str(&db_path.to_string_lossy())?
         .journal_mode(SqliteJournalMode::Wal)
         .read_only(false);
 
-    let read_opts = SqliteConnectOptions::from_str(db_path)?
+    let read_opts = SqliteConnectOptions::from_str(&db_path.to_string_lossy())?
         .journal_mode(SqliteJournalMode::Wal)
         .read_only(true);
 

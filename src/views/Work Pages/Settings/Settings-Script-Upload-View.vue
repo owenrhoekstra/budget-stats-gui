@@ -4,12 +4,15 @@ import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import { invoke } from "@tauri-apps/api/core";
 import scriptAddBar from "../../../components/scriptAddBar.vue";
+import Button from "primevue/button";
+
 
 interface Script {
   name: string;
   handler: string;
-  description?: string;      // optional
-  date_added?: string | null; // optional, matches Rust Option
+  description?: string;
+  date_added?: string | null;
+  extension?: string | null;
 }
 
 const importedScripts = ref<Script[]>([]);
@@ -18,15 +21,32 @@ onMounted(async () => {
   try {
     const scripts = await invoke<Script[]>("wealthsimple_data_get_imported_scripts");
     importedScripts.value = scripts;
-    console.log("Loaded scripts:", scripts);
   } catch (e) {
     console.error("Failed to fetch imported scripts:", e);
   }
 });
+
+const updateScripts = async () => {
+  try {
+    const scripts = await invoke<Script[]>("wealthsimple_data_get_imported_scripts");
+    importedScripts.value = scripts;
+  } catch (e) {
+    console.error("Failed to fetch imported scripts:", e);
+  }
+}
+
+function deleteScriptEntry(handler: string) {
+  const confirmed = window.confirm("Are you sure you want to delete this script?\n\nThis will remove it from the list.");
+  if (!confirmed) return;
+
+  console.log("Delete requested for:", handler);
+  // invoke("delete_script_from_db", { path: handler })
+  //   .then(() => updateScripts());
+}
 </script>
 
 <template>
-  <scriptAddBar />
+  <scriptAddBar @scriptUploaded="updateScripts" />
   <DataTable :value="importedScripts">
     <Column field="name" header="Name" />
     <Column
@@ -34,6 +54,22 @@ onMounted(async () => {
         header="Date Added"
         :body="(row: Script) => row.date_added ?? '-'"
     />
+    <Column
+        field="extension"
+        header="Extension"
+        :body="(row: Script) => row.extension ?? '-'"
+    />
+    <Column header="Delete">
+      <template #body="{ data }">
+        <Button
+          label="Delete"
+          icon="pi pi-trash"
+          severity="danger"
+          size="small"
+          @click="() => deleteScriptEntry(data.handler)"
+        />
+      </template>
+    </Column>
   </DataTable>
 </template>
 

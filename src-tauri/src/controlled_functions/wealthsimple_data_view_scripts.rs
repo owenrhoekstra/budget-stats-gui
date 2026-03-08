@@ -47,6 +47,7 @@ pub struct Script {
     description: String,
     handler: String,
     date_added: Option<String>,
+    extension: Option<String>,
 }
 
 #[tauri::command]
@@ -57,12 +58,14 @@ pub fn wealthsimple_data_get_built_in_scripts() -> Vec<Script> {
             description: "Run general stats such as mean, sd, median, and month over month changes to balance".into(),
             handler: "gen_stats".into(),
             date_added: None,
+            extension: None,
         },
         Script {
             name: "Data Skewness".into(),
             description: "Inspect Kurtosis, skewness, deviations and more".into(),
             handler: "data_skew".into(),
             date_added: None,
+            extension: None,
         },
     ]
 }
@@ -72,7 +75,7 @@ use crate::db_modules::db_pool_opener::ReadPool;
 
 #[tauri::command]
 pub async fn wealthsimple_data_get_imported_scripts(pool: tauri::State<'_, ReadPool>) -> Result<Vec<Script>, String> {
-    let rows = sqlx::query("SELECT name, path, description, date_added FROM imported_scripts")
+    let rows = sqlx::query("SELECT name, path, description, date_added, extension FROM imported_scripts")
         .fetch_all(pool.as_ref())
         .await
         .map_err(|e| e.to_string())?;
@@ -83,6 +86,7 @@ pub async fn wealthsimple_data_get_imported_scripts(pool: tauri::State<'_, ReadP
             description: row.get::<String, _>("description"),
             handler: row.get::<String, _>("path"),
             date_added: row.try_get::<String, _>("date_added").ok(),
+            extension: row.try_get::<String, _>("extension").ok(),
         }
     }).collect();
 

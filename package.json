@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "tauri:dev": "cargo tauri dev",
     "tauri:build": "cargo tauri build",
-    "tauri:clean": "cargo tauri clean"
+    "tauri:clean": " cd src-tauri && cargo clean"
   },
   "dependencies": {
     "@primeuix/themes": "^2.0.3",
