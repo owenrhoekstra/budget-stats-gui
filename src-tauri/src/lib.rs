@@ -1,31 +1,44 @@
-mod independent_functions;
 mod controlled_functions;
+mod db_modules;
+mod independent_functions;
 
-use independent_functions::*;
 use controlled_functions::*;
+use db_modules::*;
+use independent_functions::*;
+use tauri::Manager;
+use db_modules::db_pool_opener::{ReadPool, WritePool};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-  tauri::Builder::default()
-      .invoke_handler(tauri::generate_handler![
-          carousel_alerts_data_landing_page::get_alert_data,
-          csv_data_import_apple_script::csv_import_apple_script,
-          wealthsimple_data_view_scripts::wealthsimple_data_run_built_in_script,
-          wealthsimple_data_view_scripts::wealthsimple_data_get_built_in_scripts,
-          wealthsimple_data_view_scripts::wealthsimple_data_get_imported_scripts,
-          wealthsimple_data_view_scripts::wealthsimple_data_run_imported_script,
+    tauri::Builder::default()
+        .plugin(tauri_plugin_dialog::init())
+        .invoke_handler(tauri::generate_handler![
+            carousel_alerts_data_landing_page::get_alert_data,
+            csv_data_import_apple_script::csv_import_apple_script,
+            wealthsimple_data_view_scripts::wealthsimple_data_run_built_in_script,
+            wealthsimple_data_view_scripts::wealthsimple_data_get_built_in_scripts,
+            wealthsimple_data_view_scripts::wealthsimple_data_get_imported_scripts,
+            wealthsimple_data_view_scripts::wealthsimple_data_run_imported_script,
+            import_script_to_db::import_script_to_db,
+        ])
+        .setup(|app| {
+            tokio::runtime::Runtime::new().unwrap().block_on(async {
+                let (read_pool, write_pool) = db_modules::db_pool_opener::open_pools()
+                    .await
+                    .expect("Failed to open database pools");
+                app.manage(read_pool);
+                app.manage(write_pool);
+            });
 
-      ])
-    .setup(|app| {
-      if cfg!(debug_assertions) {
-        app.handle().plugin(
-          tauri_plugin_log::Builder::default()
-            .level(log::LevelFilter::Info)
-            .build(),
-        )?;
-      }
-      Ok(())
-    })
-    .run(tauri::generate_context!())
-    .expect("error while running tauri application");
+            if cfg!(debug_assertions) {
+                app.handle().plugin(
+                    tauri_plugin_log::Builder::default()
+                        .level(log::LevelFilter::Info)
+                        .build(),
+                )?;
+            }
+            Ok(())
+        })
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
 }

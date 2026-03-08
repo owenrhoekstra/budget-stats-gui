@@ -21,7 +21,7 @@ const items = ref([
 	{
 		label: "Settings",
 		icon: "pi pi-cog",
-		command: () => router.push("/Settings"),
+		command: () => router.push("/Settings-Landing"),
 	},
 	{
 		label: "Script Upload",

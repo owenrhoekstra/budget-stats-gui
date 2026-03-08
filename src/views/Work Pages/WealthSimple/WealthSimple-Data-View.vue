@@ -19,12 +19,12 @@ function confirmAction_PackagedScript(scriptName: string, message: string) {
 }
 
 function confirmAction_ImportedScript(handler: string, message: string) {
-  confirm.require({
-    message,
-    header: "Confirmation",
-    icon: "pi pi-exclamation-triangle",
-    accept: () => runImportedScript(handler),
-  });
+	confirm.require({
+		message,
+		header: "Confirmation",
+		icon: "pi pi-exclamation-triangle",
+		accept: () => runImportedScript(handler),
+	});
 }
 
 async function runPackagedScript(scriptName: string) {
@@ -32,22 +32,26 @@ async function runPackagedScript(scriptName: string) {
 }
 
 async function runImportedScript(handler: string) {
-  await invoke("wealthsimple_data_run_imported_script", { handler });
+	await invoke("wealthsimple_data_run_imported_script", { handler });
 }
 
 interface Script {
-  name: string;
-  description: string;
-  handler: string;
+	name: string;
+	description: string;
+	handler: string;
 }
 
 const packagedScripts = ref<Script[]>([]);
 const importedScripts = ref<Script[]>([]);
 
 onMounted(async () => {
-  packagedScripts.value = await invoke("wealthsimple_data_get_built_in_scripts");
-  importedScripts.value = await invoke("wealthsimple_data_get_imported_scripts");
-})
+	packagedScripts.value = await invoke(
+		"wealthsimple_data_get_built_in_scripts",
+	);
+	importedScripts.value = await invoke(
+		"wealthsimple_data_get_imported_scripts",
+	);
+});
 </script>
 
 <template>

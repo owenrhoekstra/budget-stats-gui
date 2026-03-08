@@ -10,12 +10,13 @@ const routes = [
 		component: () => import("../views/Landing Pages/Landing-Page.vue"),
 	},
 	{
-		path: "/Settings",
-		component: () => import("../views/Settings.vue"),
+		path: "/Settings-Landing",
+		component: () => import("../views/Landing Pages/Settings-Landing.vue"),
 	},
 	{
 		path: "/Script-Upload",
-		component: () => import("../views/Script-Upload.vue"),
+		component: () =>
+			import("../views/Work Pages/Settings/Settings-Script-Upload-View.vue"),
 	},
 	{
 		path: "/View-Data-Landing",
@@ -27,7 +28,8 @@ const routes = [
 	},
 	{
 		path: "/Data-View-Account-Selection",
-		component: () => import("../views/Data-View-Account-Selection.vue"),
+		component: () =>
+			import("../views/Landing Pages/Data-View-Account-Selection.vue"),
 	},
 	{
 		path: "/develop",
@@ -35,7 +37,17 @@ const routes = [
 	},
 	{
 		path: "/WealthSimple-Data-View",
-		component: () => import("../views/Work Pages/WealthSimple-Data-View.vue"),
+		component: () =>
+			import("../views/Work Pages/WealthSimple/WealthSimple-Data-View.vue"),
+	},
+	{
+		path: "/settings-script-upload-view",
+		component: () =>
+			import("../views/Work Pages/Settings/Settings-Script-Upload-View.vue"),
+	},
+	{
+		path: "/settings-landing",
+		component: () => import("../views/Landing Pages/Settings-Landing.vue"),
 	},
 ];
 
