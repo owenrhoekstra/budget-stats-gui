@@ -28,4 +28,6 @@ sqlx = { version = "=0.8.6", features = ["sqlite", "runtime-tokio"] }
 tokio = { version = "1.50.0", features = ["macros", "rt-multi-thread", "process"] }
 anyhow = "1.0.102"
 chrono = "0.4"
-uuid = { version = "1.22.0", features = ["v4"] }
+uuid = { version = "1.22.0", features = ["v7"] }
+sha2 = "0.11.0-rc.5"
+hex = "0.4.3"

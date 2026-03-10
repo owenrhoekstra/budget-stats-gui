@@ -32,7 +32,7 @@ pub async fn import_script_to_db(app: AppHandle, pool: tauri::State<'_, WritePoo
         .map_err(|e| format!("Failed to create imported_scripts dir: {}", e))?;
 
     // Generate safe filename using UUID while preserving extension
-    let filename = format!("{}.{}", Uuid::new_v4(), payload.extension);
+    let filename = format!("{}.{}", Uuid::now_v7(), payload.extension);
     let mut dest_path: PathBuf = dest_dir;
     dest_path.push(filename);
 

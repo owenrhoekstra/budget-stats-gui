@@ -24,15 +24,63 @@ pub fn wealthsimple_data_run_built_in_script(script_name: String) -> Result<Stri
 }
 
 #[tauri::command]
-pub async fn wealthsimple_data_run_imported_script(handler: String, db_path_state: tauri::State<'_, std::path::PathBuf>) -> Result<String, String> {
+pub async fn wealthsimple_data_run_imported_script(pool: tauri::State<'_, ReadPool>, handler: String, db_path_state: tauri::State<'_, std::path::PathBuf>) -> Result<String, String> {
+    use std::collections::HashMap;
+    use std::path::Path;
     use std::process::Stdio;
+    use chrono::{Utc};
 
-    let db_path = db_path_state.to_str().unwrap();
+    let db_parent_path = std::fs::canonicalize(&*db_path_state)
+        .map_err(|e| format!("Failed to canonicalize path: {}", e))?
+        .to_string_lossy()
+        .to_string();
+
+    // Determine file extension
+    let extension = Path::new(&handler)
+        .extension()
+        .and_then(|ext| ext.to_str())
+        .ok_or_else(|| "Failed to determine file extension".to_string())?;
+
+    // Map extensions to interpreters
+    let mut interpreter_map: HashMap<&str, &str> = HashMap::new();
+    interpreter_map.insert("py", "python3");
+    interpreter_map.insert("R", "RScript");
+
+    let interpreter = interpreter_map
+        .get(extension)
+        .ok_or_else(|| format!("Unsupported file extension: {}", extension))?;
+
+    let script_row = sqlx::query("SELECT name FROM imported_scripts WHERE path = ?")
+        .bind(&handler)
+        .fetch_one(pool.as_ref())
+        .await
+        .map_err(|e| format!("Failed to fetch script row: {}", e))?;
+
+    let mut imported_script_payload_json = serde_json::json! ({
+        "name": script_row.get::<String, _>("name"),
+        "db_parent_path": db_parent_path,
+        "caller": "wealthsimple_data_view",
+        "expected_db_path_extension": "db/budget-stats-gui.db",
+        "expected_table_name": "wealthsimple",
+        "time": Utc::now().to_rfc3339()
+    });
+
+    let payload_to_hash = imported_script_payload_json.to_string();
+
+    use sha2::{Digest, Sha256};
+    use hex;
+
+    let mut hasher = Sha256::new();
+    hasher.update(payload_to_hash.as_bytes());
+    let hash_result = hasher.finalize();
+    let hash = hex::encode(hash_result);
+
+    imported_script_payload_json["hash"] = serde_json::Value::String(hash);
 
     // Spawn the Python script with db path as argument
-    let child: tokio::process::Child = Command::new("python3")
+    let child: tokio::process::Child = Command::new(interpreter)
         .arg(&handler)
-        .arg(&db_path)
+        .arg(imported_script_payload_json.to_string())
         .stdout(Stdio::piped())
         .spawn()
         .map_err(|e| format!("Failed to spawn process: {}", e))?;

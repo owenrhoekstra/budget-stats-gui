@@ -13,10 +13,15 @@ import Button from 'primevue/button';
       </p>
       <Button label="Go to Script Upload" class="mt-3" @click="$router.push('/Script-Upload')" />
     </Panel>
-    <Panel header="Header">
+    <Panel header="Run Database Maintenance">
       <p class="m-0">
 
       </p>
+    </Panel>
+    <Panel header="">
+    <p class="m-0">
+
+    </p>
     </Panel>
   </div>
 </template>
