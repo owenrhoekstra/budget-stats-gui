@@ -20,11 +20,18 @@ pub fn run() {
             wealthsimple_data_view_scripts::wealthsimple_data_run_imported_script,
             import_script_to_db::import_script_to_db,
             delete_script_from_db::delete_archive_imported_scripts,
+            tangerine_chequing_data_view_scripts::tangerine_chequing_data_run_built_in_script,
+            tangerine_chequing_data_view_scripts::tangerine_chequing_data_get_built_in_scripts,
+            tangerine_chequing_data_view_scripts::tangerine_chequing_data_get_imported_scripts,
+            tangerine_chequing_data_view_scripts::tangerine_chequing_data_run_imported_script,
+            investia_tfsa_data_view_scripts::investia_tfsa_data_run_built_in_script,
+            investia_tfsa_data_view_scripts::investia_tfsa_data_get_built_in_scripts,
+            investia_tfsa_data_view_scripts::investia_tfsa_data_get_imported_scripts,
+            investia_tfsa_data_view_scripts::investia_tfsa_data_run_imported_script,
         ])
         .setup(|app| {
             tokio::runtime::Runtime::new().unwrap().block_on(async {
                 let path = app.path().app_data_dir().unwrap();
-                println!("App data dir: {:?}", path);
                 let (read_pool, write_pool) = db_modules::db_pool_opener::open_pools(&path)
                     .await
                     .expect("Failed to open database pools");

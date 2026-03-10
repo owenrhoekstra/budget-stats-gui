@@ -77,7 +77,6 @@ function deleteScriptEntry(handler: string, name: string, date: string | null | 
       </template>
     </Column>
   </DataTable>
-  <ConfirmDialog />
 </template>
 
 <style scoped>

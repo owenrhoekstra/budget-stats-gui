@@ -1,4 +1,4 @@
-pub mod gen_stats_wealthsimple;
+pub mod gen_stats_tangerine_chequing;
 // add other script modules here
 // pub mod investments;
 // pub mod dividends;
@@ -6,11 +6,11 @@ pub mod gen_stats_wealthsimple;
 use tokio::process::Command;
 
 #[tauri::command]
-pub fn wealthsimple_data_run_built_in_script(script_name: String) -> Result<String, String> {
+pub fn tangerine_chequing_data_run_built_in_script(script_name: String) -> Result<String, String> {
     match script_name.as_str() {
-        "gen_stats_wealthsimple" => {
-            let input = "wealthsimple".to_string();
-            let output = gen_stats_wealthsimple::wealthsimple_balance_averages(input);
+        "gen_stats_tangerine_chequing" => {
+            let input = "tangerine_chequing".to_string();
+            let output = gen_stats_tangerine_chequing::tangerine_chequing_balance_averages(input);
             println!("{}", output);
             Ok(output)
         }
@@ -25,7 +25,7 @@ pub fn wealthsimple_data_run_built_in_script(script_name: String) -> Result<Stri
 }
 
 #[tauri::command]
-pub async fn wealthsimple_data_run_imported_script(pool: tauri::State<'_, ReadPool>, handler: String, db_path_state: tauri::State<'_, std::path::PathBuf>) -> Result<String, String> {
+pub async fn tangerine_chequing_data_run_imported_script(pool: tauri::State<'_, ReadPool>, handler: String, db_path_state: tauri::State<'_, std::path::PathBuf>) -> Result<String, String> {
     use std::collections::HashMap;
     use std::path::Path;
     use std::process::Stdio;
@@ -60,9 +60,9 @@ pub async fn wealthsimple_data_run_imported_script(pool: tauri::State<'_, ReadPo
     let mut imported_script_payload_json = serde_json::json! ({
         "name": script_row.get::<String, _>("name"),
         "db_parent_path": db_parent_path,
-        "caller": "wealthsimple_data_view",
+        "caller": "tangerine_chequing_data_view",
         "expected_db_path_extension": "db/budget-stats-gui.db",
-        "expected_table_name": "wealthsimple",
+        "expected_table_name": "tangerine_chequing",
         "time": Utc::now().to_rfc3339()
     });
 
@@ -78,7 +78,7 @@ pub async fn wealthsimple_data_run_imported_script(pool: tauri::State<'_, ReadPo
 
     imported_script_payload_json["hash"] = serde_json::Value::String(hash);
 
-    // Spawn the Python script with db path as argument
+    // Spawn the Python script with db path as the argument
     let child: tokio::process::Child = Command::new(interpreter)
         .arg(&handler)
         .arg(imported_script_payload_json.to_string())
@@ -111,9 +111,9 @@ pub struct Script {
 }
 
 #[tauri::command]
-pub fn wealthsimple_data_get_built_in_scripts() -> Vec<Script> {
+pub fn tangerine_chequing_data_get_built_in_scripts() -> Vec<Script> {
     vec![
-        gen_stats_wealthsimple::get_script_info(),
+        gen_stats_tangerine_chequing::get_script_info(),
     ]
 }
 
@@ -121,7 +121,7 @@ use sqlx::Row;
 use crate::db_modules::db_pool_opener::ReadPool;
 
 #[tauri::command]
-pub async fn wealthsimple_data_get_imported_scripts(pool: tauri::State<'_, ReadPool>) -> Result<Vec<Script>, String> {
+pub async fn tangerine_chequing_data_get_imported_scripts(pool: tauri::State<'_, ReadPool>) -> Result<Vec<Script>, String> {
     let rows = sqlx::query("SELECT name, path, description, date_added, extension FROM imported_scripts")
         .fetch_all(pool.as_ref())
         .await

@@ -49,6 +49,14 @@ const routes = [
 		path: "/settings-landing",
 		component: () => import("../views/Landing Pages/Settings-Landing.vue"),
 	},
+	{
+		path: "/chequing-data-view",
+		component: () => import("../views/Work Pages/Chequing/Tangerine-Chequing-Data-View.vue"),
+	},
+	{
+		path: "/investia-TFSA-data-view",
+		component: () => import("../views/Work Pages/Investia TFSA/Investia-TFSA-Data-View.vue"),
+	},
 ];
 
 const router = createRouter({

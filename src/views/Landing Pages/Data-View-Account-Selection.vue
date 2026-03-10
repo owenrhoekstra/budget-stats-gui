@@ -9,10 +9,10 @@ import Button from "primevue/button";
       <Button label="Enter" icon="pi pi-sign-in" @click="$router.push('/WealthSimple-Data-View')"/>
     </Panel>
     <Panel header="Chequing">
-      <Button label="Enter" icon="pi pi-sign-in" @click="$router.push('/develop')"/>
+      <Button label="Enter" icon="pi pi-sign-in" @click="$router.push('/chequing-data-view')"/>
     </Panel>
     <Panel header="Investia TFSA">
-      <Button label="Enter" icon="pi pi-sign-in" @click="$router.push('/develop')"/>
+      <Button label="Enter" icon="pi pi-sign-in" @click="$router.push('/investia-TFSA-data-view')"/>
     </Panel>
   </div>
 </template>

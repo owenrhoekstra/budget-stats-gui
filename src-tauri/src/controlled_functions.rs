@@ -1,1 +1,3 @@
 pub mod wealthsimple_data_view_scripts;
+pub mod tangerine_chequing_data_view_scripts;
+pub mod investia_tfsa_data_view_scripts;
