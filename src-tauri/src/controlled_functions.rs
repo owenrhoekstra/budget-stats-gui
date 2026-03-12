@@ -1,3 +1,3 @@
-pub mod wealthsimple_data_view_scripts;
-pub mod tangerine_chequing_data_view_scripts;
-pub mod investia_tfsa_data_view_scripts;
+pub mod run_script_call;
+pub mod internal_scripts;
+pub mod get_runnable_scripts;

@@ -31,7 +31,13 @@ function confirmAction_ImportedScript(handler: string, message: string) {
 async function runPackagedScript(scriptName: string) {
 	runningScript.value = scriptName;
 	try {
-		scriptOutputs.value[scriptName] = await invoke("wealthsimple_data_run_built_in_script", { scriptName });
+		scriptOutputs.value[scriptName] = await invoke("execute_script", {
+			payload: {
+				type: "BuiltIn",
+				function_name: scriptName,
+				view_name: "wealthsimple",
+			},
+		});
 	} catch (err) {
 		scriptOutputs.value[scriptName] = `Error: ${err}`;
 	}
@@ -39,14 +45,20 @@ async function runPackagedScript(scriptName: string) {
 }
 
 async function runImportedScript(handler: string) {
-    runningScript.value = handler;
-    try {
-        // Store output in scriptOutputs so <pre> can render it
-        scriptOutputs.value[handler] = await invoke("wealthsimple_data_run_imported_script", { handler });
-    } catch (err) {
-        scriptOutputs.value[handler] = `Error: ${err}`;
-    }
-    runningScript.value = null;
+	runningScript.value = handler;
+	try {
+		// Store output in scriptOutputs so <pre> can render it
+		scriptOutputs.value[handler] = await invoke("execute_script", {
+			payload: {
+				type: "External",
+				handler: handler,
+				view_name: "wealthsimple",
+			},
+		});
+	} catch (err) {
+		scriptOutputs.value[handler] = `Error: ${err}`;
+	}
+	runningScript.value = null;
 }
 
 interface Script {
@@ -63,7 +75,8 @@ const scriptOutputs = ref<Record<string, string>>({});
 onMounted(async () => {
 	try {
 		packagedScripts.value = await invoke(
-			"wealthsimple_data_get_built_in_scripts",
+			"get_built_in_scripts",
+			{ viewName: "wealthsimple" }
 		);
 	} catch (err) {
 		console.error("Error fetching built-in scripts:", err);
@@ -71,7 +84,7 @@ onMounted(async () => {
 	}
 	try {
 		importedScripts.value = await invoke(
-			"wealthsimple_data_get_imported_scripts",
+			"get_imported_scripts",
 		);
 	} catch (err) {
 		console.error("Error fetching imported scripts:", err);

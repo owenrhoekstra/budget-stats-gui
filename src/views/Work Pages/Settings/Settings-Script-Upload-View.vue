@@ -6,7 +6,6 @@ import { invoke } from "@tauri-apps/api/core";
 import scriptAddBar from "../../../components/scriptAddBar.vue";
 import Button from "primevue/button";
 import { useConfirm } from "primevue/useconfirm";
-import ConfirmDialog from "primevue/confirmdialog";
 
 
 interface Script {
@@ -22,7 +21,7 @@ const confirm = useConfirm();
 
 onMounted(async () => {
   try {
-    const scripts = await invoke<Script[]>("wealthsimple_data_get_imported_scripts");
+    const scripts = await invoke<Script[]>("get_imported_scripts");
     importedScripts.value = scripts;
   } catch (e) {
     console.error("Failed to fetch imported scripts:", e);
@@ -31,7 +30,7 @@ onMounted(async () => {
 
 const updateScripts = async () => {
   try {
-    const scripts = await invoke<Script[]>("wealthsimple_data_get_imported_scripts");
+    const scripts = await invoke<Script[]>("get_imported_scripts");
     importedScripts.value = scripts;
   } catch (e) {
     console.error("Failed to fetch imported scripts:", e);

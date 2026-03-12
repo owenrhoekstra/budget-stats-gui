@@ -14,20 +14,11 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             carousel_alerts_data_landing_page::get_alert_data,
             csv_data_import_apple_script::csv_import_apple_script,
-            wealthsimple_data_view_scripts::wealthsimple_data_run_built_in_script,
-            wealthsimple_data_view_scripts::wealthsimple_data_get_built_in_scripts,
-            wealthsimple_data_view_scripts::wealthsimple_data_get_imported_scripts,
-            wealthsimple_data_view_scripts::wealthsimple_data_run_imported_script,
             import_script_to_db::import_script_to_db,
             delete_script_from_db::delete_archive_imported_scripts,
-            tangerine_chequing_data_view_scripts::tangerine_chequing_data_run_built_in_script,
-            tangerine_chequing_data_view_scripts::tangerine_chequing_data_get_built_in_scripts,
-            tangerine_chequing_data_view_scripts::tangerine_chequing_data_get_imported_scripts,
-            tangerine_chequing_data_view_scripts::tangerine_chequing_data_run_imported_script,
-            investia_tfsa_data_view_scripts::investia_tfsa_data_run_built_in_script,
-            investia_tfsa_data_view_scripts::investia_tfsa_data_get_built_in_scripts,
-            investia_tfsa_data_view_scripts::investia_tfsa_data_get_imported_scripts,
-            investia_tfsa_data_view_scripts::investia_tfsa_data_run_imported_script,
+            run_script_call::execute_script,
+            get_runnable_scripts::get_built_in_scripts,
+            get_runnable_scripts::get_imported_scripts,
         ])
         .setup(|app| {
             tokio::runtime::Runtime::new().unwrap().block_on(async {
